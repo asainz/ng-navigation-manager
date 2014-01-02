@@ -128,6 +128,7 @@
             // If there's a location change event, but the navigationTriggeredByBackButton is not false, it means that 
             // the event was triggered by the back button of the device/browser, since the navigate method would set that flag to false.
             $rootScope.$on('$locationChangeStart', function(e, newRoute){
+                newRoute = newRoute.split('/#')[1];
                 if( navigationTriggeredByBackButton ){
                     if( !checkValidChangeRoute(newRoute) ){
                         e.preventDefault();
