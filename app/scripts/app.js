@@ -8,12 +8,12 @@ angular.module('navigationManagerApp', [
   'navigationManagerModule'
 ])
   .config(function ($routeProvider, navigationManagerServiceProvider) {
-    navigationManagerServiceProvider.setStates({
+    navigationManagerServiceProvider.setRoutes({
       'list': [
         'item',
         { route: 'signin', logged: false },
         { route: 'help', logged: 'always', oneTimeVisit: true },
-        { route: 'buy', logged: true, fallback: 'list'}
+        { route: 'buy', logged: true}
       ]
     });
 
