@@ -102,9 +102,9 @@
 
             var navigate = function(route, options){
                 if( options.force || checkValidChangeRoute(route) ){
-                    $location.path(route);
                     oldRoute = currentRoute;
                     currentRoute = route;
+                    $location.path(route);
                 }
             };
 
