@@ -52,7 +52,16 @@
             routes = normalizeRoutesObject(_routes);
         };
 
-        this.$get = ['$location', function($location){
+        this.$get = ['$location', '$rootScope', function($location, $rootScope){
+            $rootScope.$on('$locationChangeStart', function(e, newRoute){
+                if( !checkValidChangeRoute(newRoute) ){
+                    e.preventDefault();
+                }else{
+                    oldRoute = currentRoute;
+                    currentRoute = newRoute;
+                }
+            });
+
             //route change validation occurs if several steps
             // 1) If there isn't an old route, the change will be valid
             // 2) The current route has to be defined in the routes config object
@@ -100,11 +109,11 @@
                 return true;
             };
 
-            var navigate = function(route, options){
-                if( options.force || checkValidChangeRoute(route) ){
+            var navigate = function(newRoute, options){
+                if( options.force || checkValidChangeRoute(newRoute) ){
                     oldRoute = currentRoute;
-                    currentRoute = route;
-                    $location.path(route);
+                    currentRoute = newRoute;
+                    $location.path(newRoute);
                 }
             };
 
