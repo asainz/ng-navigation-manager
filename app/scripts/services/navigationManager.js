@@ -54,21 +54,6 @@
         };
 
         this.$get = ['$location', '$rootScope', function($location, $rootScope){
-            $rootScope.$on('$locationChangeStart', function(e, newRoute){
-                if( navigationTriggeredByBackButton ){
-                    if( !checkValidChangeRoute(newRoute) ){
-                        e.preventDefault();
-                    }else{
-                        oldRoute = currentRoute;
-                        currentRoute = newRoute;
-                    }
-                }
-            });
-
-            $rootScope.$on('$locationChangeSuccess', function(){
-                navigationTriggeredByBackButton = true;
-            });
-
             //route change validation occurs if several steps
             // 1) If there isn't an old route, the change will be valid
             // 2) The current route has to be defined in the routes config object
@@ -129,6 +114,21 @@
             var setUserLoggedStatus = function(status){
                 userLogged = !!status;
             };
+
+            $rootScope.$on('$locationChangeStart', function(e, newRoute){
+                if( navigationTriggeredByBackButton ){
+                    if( !checkValidChangeRoute(newRoute) ){
+                        e.preventDefault();
+                    }else{
+                        oldRoute = currentRoute;
+                        currentRoute = newRoute;
+                    }
+                }
+            });
+
+            $rootScope.$on('$locationChangeSuccess', function(){
+                navigationTriggeredByBackButton = true;
+            });
 
             return {
                 navigate: navigate,
