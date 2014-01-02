@@ -6,7 +6,7 @@
 
     navigationManagerModule.provider('navigationManagerService', function(){
         var routes = {};
-        var currentRoute;
+        var currentRoute = '/';
         var oldRoute;
         // var routesCounter = [];
         var userLogged = false;
@@ -59,30 +59,23 @@
                 navigationTriggeredByBackButton = true;
             };
 
-            //route change validation occurs if several steps
-            // 1) If there isn't an old route, the change will be valid
-            // 2) The current route has to be defined in the routes config object
-            // 3) The new route is one of the valid route destinations of the current route.
-            // 4) The user logged status  is the same as the defined in the route config.
+            // route change validation occurs if several steps
+            // 1) The current route has to be defined in the routes config object
+            // 2) The new route is one of the valid route destinations of the current route.
+            // 3) The user logged status  is the same as the defined in the route config.
             var checkValidChangeRoute = function(newRoute){
                 var validNewRoute = false;
                 var destinationRoute = {};
-
-                // (1)
-                if( !oldRoute && !currentRoute ){
-                    return true;
-                }
-
                 var currentRouteConfig = routes[currentRoute];
 
-                // (2)
+                // (1)
                 if( !currentRouteConfig ){
                     console.log('route ' + currentRoute + ' is not defined.');
                     return false;
                 }
 
                 angular.forEach(currentRouteConfig, function(destRoute){
-                    // (3)
+                    // (2)
                     if( destRoute.route === newRoute ){
                         validNewRoute = true;
                         destinationRoute = destRoute;
@@ -93,7 +86,7 @@
                     return false;
                 }
 
-                // (4)
+                // (3)
                 validNewRoute = false;
                 if( destinationRoute.logged === 'always' || destinationRoute.logged === userLogged){
                     validNewRoute = true;
