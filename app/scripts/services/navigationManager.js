@@ -106,6 +106,11 @@
                 return true;
             };
 
+            // This methods takes care of making the location change itself if it's a valid one.
+            // By setting navigationTriggeredByBackButton to false, the manager knows that this route change
+            // was trigger by the user clicking in a ap button and not the back button of the device/browser
+            // The options parameter contains these options:
+                // force: bypasses the checks and forces the navigation (useful for edge cases)
             var navigate = function(newRoute, options){
                 if( options.force || checkValidChangeRoute(newRoute) ){
                     navigationTriggeredByBackButton = false;
@@ -116,10 +121,14 @@
                 }
             };
 
+            // Set the user status (logged or not logged) so the manager can determine the validity of each route change
+            // according to the user being logged or not.
             var setUserLoggedStatus = function(status){
                 userLogged = !!status;
             };
 
+            // If there's a location change event, but the navigationTriggeredByBackButton is not false, it means that 
+            // the event was triggered by the back button of the device/browser, since the navigate method would set that flag to false.
             $rootScope.$on('$locationChangeStart', function(e, newRoute){
                 if( navigationTriggeredByBackButton ){
                     if( !checkValidChangeRoute(newRoute) ){
@@ -131,6 +140,7 @@
                 }
             });
 
+            // After every success location change reset everything, so the manager can work on the future location change.
             $rootScope.$on('$locationChangeSuccess', function(){
                 prepareManagerForANewRouteChange();
             });
