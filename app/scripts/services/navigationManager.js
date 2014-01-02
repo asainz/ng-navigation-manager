@@ -10,6 +10,7 @@
         var oldRoute;
         // var routesCounter = [];
         var userLogged = false;
+        var navigationTriggeredByBackButton = true;
 
         // This methods takes the routes object set by the user and returns a normalized version of it.
         // It will add replace all missing values for the default version of it.
@@ -54,12 +55,18 @@
 
         this.$get = ['$location', '$rootScope', function($location, $rootScope){
             $rootScope.$on('$locationChangeStart', function(e, newRoute){
-                if( !checkValidChangeRoute(newRoute) ){
-                    e.preventDefault();
-                }else{
-                    oldRoute = currentRoute;
-                    currentRoute = newRoute;
+                if( navigationTriggeredByBackButton ){
+                    if( !checkValidChangeRoute(newRoute) ){
+                        e.preventDefault();
+                    }else{
+                        oldRoute = currentRoute;
+                        currentRoute = newRoute;
+                    }
                 }
+            });
+
+            $rootScope.$on('$locationChangeSuccess', function(){
+                navigationTriggeredByBackButton = true;
             });
 
             //route change validation occurs if several steps
@@ -111,6 +118,8 @@
 
             var navigate = function(newRoute, options){
                 if( options.force || checkValidChangeRoute(newRoute) ){
+                    navigationTriggeredByBackButton = false;
+
                     oldRoute = currentRoute;
                     currentRoute = newRoute;
                     $location.path(newRoute);
