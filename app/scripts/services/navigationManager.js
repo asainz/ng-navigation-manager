@@ -111,7 +111,12 @@
             // was trigger by the user clicking in a ap button and not the back button of the device/browser
             // The options parameter contains these options:
                 // force: bypasses the checks and forces the navigation (useful for edge cases)
-            var navigate = function(newRoute, options){
+            var navigate = function(newRoute, opts){
+                var defaultOptions = {
+                    force: false
+                };
+                var options = angular.extend({}, defaultOptions, opts);
+
                 if( options.force || checkValidChangeRoute(newRoute) ){
                     navigationTriggeredByBackButton = false;
 
