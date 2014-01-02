@@ -6,6 +6,10 @@
 
     navigationManagerModule.provider('navigationManagerService', function(){
         var routes = {};
+        var currentRoute;
+        var oldRoute;
+        // var routesCounter = [];
+        var userLogged = false;
 
         // This methods takes the routes object set by the user and returns a normalized version of it.
         // It will add replace all missing values for the default version of it.
@@ -46,22 +50,71 @@
 
         this.setRoutes = function(_routes){
             routes = normalizeRoutesObject(_routes);
-            console.log('normalized', routes);
         };
 
         this.$get = ['$location', function($location){
-            var checkValidChangeRoute = function(){
+            //route change validation occurs if several steps
+            // 1) If there isn't an old route, the change will be valid
+            // 2) The current route has to be defined in the routes config object
+            // 3) The new route is one of the valid route destinations of the current route.
+            // 4) The user logged status  is the same as the defined in the route config.
+            var checkValidChangeRoute = function(newRoute){
+                var validNewRoute = false;
+                var destinationRoute = {};
+
+                // (1)
+                if( !oldRoute && !currentRoute ){
+                    return true;
+                }
+
+                var currentRouteConfig = routes[currentRoute];
+
+                // (2)
+                if( !currentRouteConfig ){
+                    console.log('route ' + currentRoute + ' is not defined.');
+                    return false;
+                }
+
+                angular.forEach(currentRouteConfig, function(destRoute){
+                    // (3)
+                    if( destRoute.route === newRoute ){
+                        validNewRoute = true;
+                        destinationRoute = destRoute;
+                    }
+                });
+                if( !validNewRoute ){
+                    console.log(currentRoute + ' to ' + newRoute + ' is not a valid change.');
+                    return false;
+                }
+
+                // (4)
+                validNewRoute = false;
+                if( destinationRoute.logged === 'always' || destinationRoute.logged === userLogged){
+                    validNewRoute = true;
+                }
+                if( !validNewRoute ){
+                    console.log(currentRoute + ' to ' + newRoute + ' is not a valid change.');
+                    return false;
+                }
+
                 return true;
             };
 
             var navigate = function(route, options){
                 if( options.force || checkValidChangeRoute(route) ){
                     $location.path(route);
+                    oldRoute = currentRoute;
+                    currentRoute = route;
                 }
             };
 
+            var setUserLoggedStatus = function(status){
+                userLogged = !!status;
+            };
+
             return {
-                navigate: navigate
+                navigate: navigate,
+                setUserLoggedStatus: setUserLoggedStatus
             };
 
         }];
