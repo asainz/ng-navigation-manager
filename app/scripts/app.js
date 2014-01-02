@@ -14,7 +14,14 @@ angular.module('navigationManagerApp', [
         { route: 'signin', logged: false },
         { route: 'help', logged: 'always', oneTimeVisit: true },
         { route: 'buy', logged: true}
-      ]
+      ],
+      '/': [
+        {
+          route: 'about',
+          logged: 'always'
+        }
+      ],
+      'about': '/'
     });
 
     $routeProvider
@@ -22,10 +29,10 @@ angular.module('navigationManagerApp', [
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+      .when('/about', {
+        template: '<h1>This is the about page</h1>'
+      })
       .otherwise({
         redirectTo: '/'
       });
-  })
-  .run(function(navigationManagerService){
-    console.log('navigationManagerService ===>', navigationManagerService);
   });
