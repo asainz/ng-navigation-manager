@@ -54,6 +54,11 @@
         };
 
         this.$get = ['$location', '$rootScope', function($location, $rootScope){
+            // This method will take care of reseting everything that needs to be reset after every route change
+            var prepareManagerForANewRouteChange = function(){
+                navigationTriggeredByBackButton = true;
+            };
+
             //route change validation occurs if several steps
             // 1) If there isn't an old route, the change will be valid
             // 2) The current route has to be defined in the routes config object
@@ -127,7 +132,7 @@
             });
 
             $rootScope.$on('$locationChangeSuccess', function(){
-                navigationTriggeredByBackButton = true;
+                prepareManagerForANewRouteChange();
             });
 
             return {
